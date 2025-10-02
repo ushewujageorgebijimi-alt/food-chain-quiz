@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KS3 Food Chain Starter Activity</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6f7e6; /* Light green nature background */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #228B22; /* Forest green */
+            text-align: center;
+        }
+        .instructions {
+            background-color: #f0fff0;
+            border: 1px solid #90ee90;
+            padding: 15px;
+            margin-bottom: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+        }
+        .task-container {
+            width: 80%;
+            max-width: 800px;
+            margin-bottom: 30px;
+        }
+        .task-title {
+            font-weight: bold;
+            color: #006400; /* Dark green */
+        }
+        .organisms-list, .roles-bank, .chain-builder {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .organism-item, .role-tile, .draggable-organism, .drop-slot {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: grab;
+            text-align: center;
+            min-width: 120px;
+        }
+        .organism-item {
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 45%;
+        }
+        .organism-item img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        .drop-slot {
+            background-color: #f0f0f0;
+            min-height: 40px;
+            min-width: 120px;
+        }
+        .role-tile {
+            background-color: #90ee90; /* Light green */
+        }
+        .draggable-organism {
+            background-color: #add8e6; /* Light blue for variety */
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .draggable-organism img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        .chain-builder .drop-slot {
+            margin: 10px;
+            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .chain-builder .drop-slot img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        #timer {
+            font-size: 1.2em;
+            color: #ff4500; /* Orange red for urgency */
+            margin-bottom: 10px;
+        }
+        #feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            width: 80%;
+            max-width: 800px;
+            display: none;
+        }
+        #feedback table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        #feedback th, #feedback td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        #feedback th {
+            background-color: #f2f2f2;
+        }
+        .misconception-question {
+            margin-top: 10px;
+        }
+        .misconception-question label {
+            display: block;
+            margin: 5px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #228B22;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #006400;
+        }
+    </style>
+</head>
+<body>
+    <h1>KS3 Food Chain Starter Activity</h1>
+    <div class="instructions">
+        <p><strong>Instructions:</strong></p>
+        <p>This is a 3-minute interactive quiz on food chains for KS3 pupils. Complete both tasks before time runs out. The timer will auto-submit.</p>
+        <p><strong>Task 1:</strong> Drag roles from the right bank to the slots beside each organism on the left. Roles may have duplicates. Note: The sun is an energy source, not a producer.</p>
+        <p><strong>Task 2:</strong> Drag organisms to build the chain: Sun → Grass → Rabbit → Fox. Then answer the follow-up misconception questions.</p>
+        <p>Click Submit to check answers, or Reset to try again.</p>
+    </div>
+
+    <div id="timer">Time left: 3:00</div>
+
+    <div class="task-container">
+        <div class="task-title">Task 1: Assign Roles to Organisms</div>
+        <div class="organisms-list">
+            <!-- Updated Organisms with icons and drop slots -->
+            <div class="organism-item"><img src="https://img.icons8.com/color/96/sun--v1.png" alt="Sun">Sun <div class="drop-slot" id="slot-sun"></div></div>
+            <div class="organism-item"><img src="https://img.icons8.com/color/96/grass.png" alt="Grass">Grass <div class="drop-slot" id="slot-grass"></div></div>
+            <div class="organism-item"><img src="https://img.icons8.com/color/96/rabbit.png" alt="Rabbit">Rabbit <div class="drop-slot" id="slot-rabbit"></div></div>
+            <div class="organism-item"><img src="https://img.icons8.com/color/96/fox.png" alt="Fox">Fox <div class="drop-slot" id="slot-fox"></div></div>
+            <div class="organism-item"><img src="https://img.icons8.com/color/96/flower.png" alt="Flower">Flower <div class="drop-slot" id="slot-flower"></div></div>
+            <div class="organism-item"><img src="https://img.icons8.com/color/96/cow.png" alt="Cow">Cow <div class="drop-slot" id="slot-cow"></div></div>
+            <div class="organism-item"><img src="https://img.icons8.com/color/96/wolf.png" alt="Wolf">Wolf <div class="drop-slot" id="slot-wolf"></div></div>
+            <div class="organism-item"><img src="https://img.icons8.com/color/96/tree.png" alt="Tree">Tree <div class="drop-slot" id="slot-tree"></div></div>
+        </div>
+        <div class="roles-bank" id="roles-bank">
+            <!-- Roles will be shuffled and added via JS -->
+        </div>
+    </div>
+
+    <div class="task-container">
+        <div class="task-title">Task 2: Build the Food Chain & Misconception Questions</div>
+        <div class="draggable-organisms" id="draggable-organisms">
+            <!-- Draggables will be shuffled and added via JS -->
+        </div>
+        <div class="chain-builder">
+            <div class="drop-slot" id="chain-slot-1"></div> →
+            <div class="drop-slot" id="chain-slot-2"></div> →
+            <div class="drop-slot" id="chain-slot-3"></div> →
+            <div class="drop-slot" id="chain-slot-4"></div>
+        </div>
+        <div class="misconception-question">
+            <p>If we remove the rabbit (primary consumer) from the chain, what happens to the grass population?</p>
+            <label><input type="radio" name="grass-effect" value="Increases"> A) Increases</label>
+            <label><input type="radio" name="grass-effect" value="Decreases"> B) Decreases</label>
+            <label><input type="radio" name="grass-effect" value="Stays the same"> C) Stays the same</label>
+        </div>
+        <div class="misconception-question">
+            <p>If we remove the rabbit, what happens to the fox population?</p>
+            <label><input type="radio" name="fox-effect" value="Increases"> A) Increases</label>
+            <label><input type="radio" name="fox-effect" value="Decreases"> B) Decreases</label>
+            <label><input type="radio" name="fox-effect" value="Stays the same"> C) Stays the same</label>
+        </div>
+    </div>
+
+    <button onclick="submitQuiz()">Submit</button>
+    <button onclick="resetQuiz()">Reset</button>
+
+    <div id="feedback"></div>
+
+    <script>
+        // Updated correct answers (focus on producers and consumers, sun as Energy Source)
+        const correctRoles = {
+            'sun': 'Energy Source',
+            'grass': 'Producer',
+            'rabbit': 'Primary Consumer',
+            'fox': 'Secondary Consumer',
+            'flower': 'Producer',
+            'cow': 'Primary Consumer',
+            'wolf': 'Secondary Consumer',
+            'tree': 'Producer'
+        };
+        const correctChain = ['Sun', 'Grass', 'Rabbit', 'Fox'];
+        const correctGrassEffect = 'Increases'; // Grass grows more without being eaten
+        const correctFoxEffect = 'Decreases'; // Fox has less food
+
+        // Updated Roles for Task 1 (with duplicates, added Energy Source)
+        let roles = ['Energy Source', 'Producer', 'Producer', 'Producer', 'Primary Consumer', 'Primary Consumer', 'Secondary Consumer', 'Secondary Consumer'];
+
+        // Organisms for Task 2 with icons
+        const chainOrganismsData = [
+            {name: 'Sun', img: 'https://img.icons8.com/color/96/sun--v1.png'},
+            {name: 'Grass', img: 'https://img.icons8.com/color/96/grass.png'},
+            {name: 'Rabbit', img: 'https://img.icons8.com/color/96/rabbit.png'},
+            {name: 'Fox', img: 'https://img.icons8.com/color/96/fox.png'}
+        ];
+
+        // Shuffle function
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        // Initialize quiz
+        function initQuiz() {
+            // Shuffle and display roles
+            roles = shuffle(roles);
+            const rolesBank = document.getElementById('roles-bank');
+            rolesBank.innerHTML = '';
+            roles.forEach(role => {
+                const tile = document.createElement('div');
+                tile.className = 'role-tile';
+                tile.draggable = true;
+                tile.innerHTML = role;
+                tile.addEventListener('dragstart', dragStart);
+                rolesBank.appendChild(tile);
+            });
+
+            // Shuffle and display chain organisms
+            let shuffledChain = shuffle([...chainOrganismsData]);
+            const draggableOrg = document.getElementById('draggable-organisms');
+            draggableOrg.innerHTML = '';
+            shuffledChain.forEach(org => {
+                const item = document.createElement('div');
+                item.className = 'draggable-organism';
+                item.draggable = true;
+                item.innerHTML = `<img src="${org.img}" alt="${org.name}"> ${org.name}`;
+                item.dataset.name = org.name; // For checking answers
+                item.addEventListener('dragstart', dragStart);
+                draggableOrg.appendChild(item);
+            });
+
+            // Add drop event listeners to all slots
+            document.querySelectorAll('.drop-slot').forEach(slot => {
+                slot.addEventListener('dragover', dragOver);
+                slot.addEventListener('drop', drop);
+                slot.innerHTML = ''; // Clear previous drops
+            });
+
+            // Reset radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        }
+
+        // Drag and drop functions
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.innerHTML);
+            e.dataTransfer.setData('name', e.target.dataset.name || e.target.textContent); // For name checking
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const data = e.dataTransfer.getData('text/plain');
+            const name = e.dataTransfer.getData('name');
+            if (!e.target.innerHTML) { // Only drop if slot is empty
+                e.target.innerHTML = data;
+                e.target.dataset.name = name; // Store name for checking
+                // Remove dragged item from source
+                const source = Array.from(document.querySelectorAll('.draggable-organism, .role-tile')).find(el => el.innerHTML === data);
+                if (source && source.parentNode) source.parentNode.removeChild(source);
+            }
+        }
+
+        // Timer
+        let timeLeft = 180; // 3 minutes in seconds
+        let timerInterval;
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').textContent = `Time left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        // Submit quiz
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            let feedback = '<h2>Feedback</h2>';
+
+            // Task 1 feedback with table for spacing
+            feedback += '<p><strong>Task 1 Results:</strong></p>';
+            feedback += '<table><tr><th>Organism</th><th>Your Answer</th><th>Correct Answer</th><th>Result</th></tr>';
+            let task1Correct = 0;
+            Object.keys(correctRoles).forEach(org => {
+                const slot = document.getElementById(`slot-${org}`);
+                const answer = slot.textContent.trim();
+                const correct = correctRoles[org];
+                const result = answer === correct ? '✅' : '❌';
+                feedback += `<tr><td>${org.charAt(0).toUpperCase() + org.slice(1)}</td><td>${answer || 'None'}</td><td>${correct}</td><td>${result}</td></tr>`;
+                if (answer === correct) task1Correct++;
+            });
+            feedback += '</table>';
+            feedback += `<p>Task 1 Score: ${task1Correct}/8</p>`;
+
+            // Task 2 feedback with table for spacing
+            feedback += '<p><strong>Task 2 Chain Results:</strong></p>';
+            feedback += '<table><tr><th>Slot</th><th>Your Answer</th><th>Correct Answer</th><th>Result</th></tr>';
+            let task2Correct = 0;
+            for (let i = 1; i <= 4; i++) {
+                const slot = document.getElementById(`chain-slot-${i}`);
+                const answer = slot.dataset.name || ''; // Use dataset for name
+                const correct = correctChain[i-1];
+                const result = answer === correct ? '✅' : '❌';
+                feedback += `<tr><td>Slot ${i}</td><td>${answer || 'None'}</td><td>${correct}</td><td>${result}</td></tr>`;
+                if (answer === correct) task2Correct++;
+            }
+            feedback += '</table>';
+            feedback += `<p>Task 2 Chain Score: ${task2Correct}/4</p>`;
+
+            // Misconception questions feedback
+            feedback += '<p><strong>Task 2 Misconception Questions:</strong></p>';
+            feedback += '<table><tr><th>Question</th><th>Your Answer</th><th>Correct Answer</th><th>Result</th></tr>';
+
+            // Grass question
+            const grassAnswer = document.querySelector('input[name="grass-effect"]:checked')?.value || 'None';
+            const grassResult = grassAnswer === correctGrassEffect ? '✅' : '❌';
+            feedback += `<tr><td>If rabbit removed, grass population?</td><td>${grassAnswer}</td><td>${correctGrassEffect}</td><td>${grassResult}</td></tr>`;
+
+            // Fox question
+            const foxAnswer = document.querySelector('input[name="fox-effect"]:checked')?.value || 'None';
+            const foxResult = foxAnswer === correctFoxEffect ? '✅' : '❌';
+            feedback += `<tr><td>If rabbit removed, fox population?</td><td>${foxAnswer}</td><td>${correctFoxEffect}</td><td>${foxResult}</td></tr>`;
+
+            feedback += '</table>';
+            feedback += `<p>Misconception Questions Score: ${(grassAnswer === correctGrassEffect ? 1 : 0) + (foxAnswer === correctFoxEffect ? 1 : 0)}/2</p>`;
+
+            document.getElementById('feedback').innerHTML = feedback;
+            document.getElementById('feedback').style.display = 'block';
+        }
+
+        // Reset quiz
+        function resetQuiz() {
+            location.reload();
+        }
+
+        // Start the quiz
+        initQuiz();
+        startTimer();
+    </script>
+</body>
+</html>
